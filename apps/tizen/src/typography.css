@@ -1,0 +1,272 @@
+/* Semantic styles use the user's exact scale; the stage handles screen scaling. */
+body {
+  font: var(--type-regular-body);
+  letter-spacing: var(--tracking-regular-body);
+}
+.header nav button,
+.header nav button.active {
+  font: var(--type-medium-headline1);
+  letter-spacing: 0;
+}
+.hero h1,
+.hero h1.long-title {
+  font: var(--type-bold-large-title);
+  letter-spacing: 0;
+}
+.hero-copy > p {
+  font: var(--type-regular-headline1);
+  letter-spacing: 0;
+}
+.hero-side b,
+.metadata {
+  font: var(--type-regular-small-body);
+  letter-spacing: 0;
+}
+.hero-side span,
+.eyebrow,
+.original {
+  font: var(--type-medium-caption2);
+  letter-spacing: 0;
+}
+.badge,
+.tiny-badge,
+.new-tag,
+.mini-brand ~ .new-tag {
+  font: var(--type-medium-caption2);
+  letter-spacing: 0;
+}
+.white-btn,
+.glass-btn,
+.soft-btn,
+.hero-play {
+  font: var(--type-medium-headline2);
+  letter-spacing: 0;
+}
+.row-heading h2,
+.detail-body h2,
+.episodes-heading h2 {
+  font: var(--type-medium-title3);
+  letter-spacing: 0;
+}
+.media-card strong,
+.rank-card .media-card strong {
+  font: var(--type-medium-headline2);
+  letter-spacing: 0;
+}
+.card-caption,
+.rank-card .card-caption,
+.header-clock {
+  font: var(--type-regular-caption1);
+  letter-spacing: var(--tracking-regular-caption1);
+}
+.browse-footer,
+.browse-footer span {
+  font: var(--type-regular-small-body-tight);
+  letter-spacing: var(--tracking-regular-small-body-tight);
+}
+.page-heading h1 {
+  font: var(--type-regular-large-title);
+  letter-spacing: 0;
+}
+.chip,
+.category-toolbar .chip,
+.sort-buttons .chip {
+  font: var(--type-medium-body);
+  letter-spacing: 0;
+}
+.category-toolbar h1 {
+  font: var(--type-medium-large-title);
+  letter-spacing: 0;
+}
+.empty-state h2,
+.settings-layout > aside h2 {
+  font: var(--type-medium-title1);
+  letter-spacing: 0;
+}
+.empty-state p {
+  font: var(--type-regular-headline1);
+  letter-spacing: 0;
+}
+.detail-hero h1 {
+  font: var(--type-bold-title1);
+  letter-spacing: 0;
+}
+.detail-hero .original {
+  font: var(--type-regular-caption1);
+  letter-spacing: var(--tracking-regular-caption1);
+}
+.detail-columns aside,
+.resume-line {
+  font: var(--type-regular-small-body);
+  letter-spacing: 0;
+}
+.synopsis {
+  font: var(--type-regular-body);
+  letter-spacing: 0;
+}
+.episode-number {
+  font: var(--type-regular-title1);
+  letter-spacing: 0;
+}
+.episode-copy strong {
+  font: var(--type-medium-title4);
+  letter-spacing: 0;
+}
+.episode-copy p,
+.episode-action,
+.about-title p {
+  font: var(--type-regular-small-body);
+  letter-spacing: 0;
+}
+.about-title > span,
+.version-tag {
+  font: var(--type-regular-caption2);
+  letter-spacing: 0;
+}
+.search-input input,
+.server-form input {
+  font: var(--type-regular-body);
+  letter-spacing: 0;
+}
+.keyboard button {
+  font: var(--type-medium-title3);
+  letter-spacing: 0;
+}
+.keyboard-actions button,
+.search-note {
+  font: var(--type-regular-small-body);
+  letter-spacing: 0;
+}
+.search-results h2 {
+  font: var(--type-regular-title3);
+  letter-spacing: 0;
+}
+.settings-layout > aside p,
+.settings-content p,
+.settings-content label {
+  font: var(--type-regular-body);
+  letter-spacing: 0;
+}
+.settings-content h2 {
+  font: var(--type-medium-title2);
+  letter-spacing: 0;
+}
+.setting-toggle strong {
+  font: var(--type-medium-headline1);
+  letter-spacing: 0;
+}
+.setting-toggle small {
+  font: var(--type-regular-small-body);
+  letter-spacing: 0;
+}
+.connection-error h1 {
+  font: var(--type-bold-title1);
+  letter-spacing: 0;
+}
+.connection-error p {
+  font: var(--type-regular-title4);
+  letter-spacing: 0;
+}
+.connection-error small,
+.opening span,
+.toast {
+  font: var(--type-regular-body);
+  letter-spacing: 0;
+}
+.player-top h2 {
+  font: var(--type-medium-title2);
+  letter-spacing: 0;
+}
+.player-top p {
+  font: var(--type-regular-body);
+  letter-spacing: 0;
+}
+.player-top .eyebrow {
+  font: var(--type-regular-caption2);
+  letter-spacing: 0;
+}
+.timeline-head,
+.buffering p {
+  font: var(--type-regular-headline2);
+  letter-spacing: 0;
+}
+.control-title {
+  font: var(--type-regular-title4);
+  letter-spacing: 0;
+}
+.control-icon small,
+.player-help,
+.player-help .engine-label {
+  font: var(--type-regular-caption2);
+  letter-spacing: 0;
+}
+.control-icon:focus:after,
+.control-icon:hover:after {
+  font: var(--type-regular-small-body);
+  letter-spacing: 0;
+}
+.menu-header h2 {
+  font: var(--type-medium-title2);
+  letter-spacing: 0;
+}
+.menu-scroll h3 {
+  font: var(--type-medium-headline2);
+  letter-spacing: 0;
+}
+.menu-option {
+  font: var(--type-medium-headline1);
+  letter-spacing: 0;
+}
+.menu-option small {
+  font: var(--type-regular-caption2);
+  letter-spacing: 0;
+}
+.menu-note,
+.player-menu .soft-btn {
+  font: var(--type-regular-small-body);
+  letter-spacing: 0;
+}
+.player-menu .button-row .chip {
+  font: var(--type-medium-small-body);
+  letter-spacing: 0;
+}
+.playback-error h2 {
+  font: var(--type-medium-large-title);
+  letter-spacing: 0;
+}
+.playback-error p,
+.playback-error .button-row button {
+  font: var(--type-regular-headline1);
+  letter-spacing: 0;
+}
+.next-up h2 {
+  font: var(--type-medium-title1);
+  letter-spacing: 0;
+}
+.next-up p,
+.next-up .white-btn,
+.next-up .soft-btn {
+  font: var(--type-regular-headline1);
+  letter-spacing: 0;
+}
+.rank-number {
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+}
+/* Only the Keremflix wordmark / brand glyphs retain Bebas Neue. */
+.fresh {font-weight:500;}
+.profile-button>span {font:var(--type-medium-title3);}
+.avatar {font:var(--type-medium-large-title);}
+.ranking .row-heading h2:before {font:var(--type-medium-caption1);letter-spacing:0;line-height:1;}
+.brand,
+.player-brand,
+.mini-brand,
+.original > span,
+.browse-footer strong,
+.loading-brand {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+}
+.header.scrolled {
+  background: #141414;
+}

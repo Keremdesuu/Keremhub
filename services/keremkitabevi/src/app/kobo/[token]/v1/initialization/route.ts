@@ -1,0 +1,12 @@
+import {NextResponse} from "next/server";
+import {BASE_PATH} from "@/lib/config";
+import {localizeKoboResources} from "@/lib/kobo-resources";
+import {koboPublicOrigin,validKoboToken} from "@/lib/kobo";
+export const dynamic="force-dynamic";
+export async function GET(req:Request,{params}:{params:Promise<{token:string}>}){
+ const {token}=await params;if(!(await validKoboToken(token)))return new Response("Not found",{status:404});
+ const origin=koboPublicOrigin(req),root=origin+BASE_PATH+"/kobo/"+token,cover=origin+BASE_PATH+"/api/books/{ImageId}/cover?format=jpeg";
+ const resources=localizeKoboResources(root,origin+BASE_PATH) as Record<string,unknown>;
+ Object.assign(resources,{library_sync:root+"/v1/library/sync",library_metadata:root+"/v1/library/{Ids}/metadata",library_book:root+"/v1/user/library/books/{LibraryItemId}",reading_state:root+"/v1/library/{Ids}/state",affiliaterequest:root+"/v1/affiliate",device_auth:root+"/v1/auth/device",device_refresh:root+"/v1/auth/refresh",oauth_host:root+"/oauth",image_host:origin+BASE_PATH,userguide_host:"https://ereaderfiles.kobo.com",dictionary_host:"https://ereaderfiles.kobo.com",image_url_template:cover,image_url_quality_template:cover});
+ return NextResponse.json({Resources:resources},{headers:{"x-kobo-apitoken":"e30="}});
+}

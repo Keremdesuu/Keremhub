@@ -1,0 +1,11 @@
+const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict'),ts=require('typescript'),{Readable}=require('node:stream');
+const bytes=Buffer.alloc(1024,65),date=new Date('2026-10-26T19:00:00Z');let writes=0,valid=true;
+const book={id:818,koboSync:true,updatedAt:date},db={book:{findUnique:async()=>book},koboBookState:{upsert:async()=>{writes++}}};
+const mocks={'node:fs':{createReadStream:(_,{start,end})=>Readable.from(Array.from({length:Math.ceil((end-start+1)/16)},(_,i)=>bytes.subarray(start+i*16,Math.min(start+(i+1)*16,end+1))))},'@/lib/db':{db},'@/lib/kobo':{validKoboToken:async()=>valid},'@/lib/kobo-files':{prepareKoboFile:async()=>({path:'/fake',size:bytes.length,format:'KEPUB'})}};
+const m={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/app/kobo/[token]/download/[id]/route.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText,{module:m,exports:m.exports,require:n=>mocks[n]||require(n),Response,Headers,ReadableStream,Date,Buffer,console:{info(){}}});
+const call=range=>m.exports.GET(new Request('http://localhost/download/818',{headers:range?{Range:range}:{}}),{params:Promise.resolve({id:'818',token:'TEST'})});
+(async()=>{let r=await call('bytes=0-31');assert.equal(r.status,206);assert.equal((await r.arrayBuffer()).byteLength,32);assert.equal(writes,0);console.log('PASS partial download does not acknowledge transfer');
+r=await call();const reader=r.body.getReader();await reader.read();await reader.cancel();await new Promise(resolve=>setTimeout(resolve,10));assert.equal(writes,0);console.log('PASS cancelled transfer remains queued');
+r=await call();assert.equal((await r.arrayBuffer()).byteLength,1024);assert.equal(writes,1);console.log('PASS complete transfer is recorded exactly once');
+assert.equal((await call('bytes=99999-')).status,416);valid=false;assert.equal((await call()).status,404);assert.equal(writes,1);console.log('PASS invalid range/token cannot acknowledge transfer');
+})().catch(error=>{console.error(error);process.exitCode=1});

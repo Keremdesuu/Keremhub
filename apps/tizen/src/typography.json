@@ -1,0 +1,32 @@
+{
+  "regular": {
+    "caption2": [11, 0],
+    "caption1": [13, 0.25],
+    "small-body-tight": [14, -0.25],
+    "small-body": [14, 0],
+    "body": [16, 0],
+    "headline2": [17, 0],
+    "headline1": [18, 0],
+    "title4": [20, 0],
+    "title3": [21, 0],
+    "title2": [24, 0],
+    "title1": [27, 0],
+    "large-title": [50, 0]
+  },
+  "medium": {
+    "caption2": [12, 0],
+    "caption1": [13, 0],
+    "small-body": [14, 0],
+    "body": [16, 0],
+    "body-tight": [16, -0.5],
+    "headline2": [20, 0],
+    "headline1": [21, 0],
+    "title4": [22, 0],
+    "title3": [24, 0],
+    "title3-tight": [24, -0.5],
+    "title2": [28, 0],
+    "title1": [30, 0],
+    "large-title": [33, 0]
+  },
+  "bold": { "title2": [20, 0], "title1": [48, 0], "large-title": [55, 0] }
+}

@@ -1,0 +1,25 @@
+[Unit]
+Description=Kerem Drive personal cloud storage
+After=network.target
+RequiresMountsFor=/mnt/hdd
+ConditionPathIsMountPoint=/mnt/hdd
+
+[Service]
+Type=simple
+User=kerempi
+WorkingDirectory=/home/kerempi/kerem-drive
+Environment=NODE_ENV=production
+EnvironmentFile=/home/kerempi/kerem-drive/.env
+ExecStart=/usr/bin/node /home/kerempi/kerem-drive/server.mjs
+Restart=always
+RestartSec=3
+MemoryMax=350M
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/kerempi/kerem-drive/data /mnt/hdd/kerem-drive
+
+[Install]
+WantedBy=multi-user.target

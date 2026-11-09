@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id            Int      @id @default(autoincrement())
+  name          String   @unique
+  hidden        Boolean  @default(false)
+  avatarMediaId Int?
+  createdAt     DateTime @default(now())
+  media         Media[]
+}
+
+model Media {
+  id        Int       @id @default(autoincrement())
+  isAvatar  Boolean   @default(false)
+  avatarFile String?
+  kind      String // "VIDEO" | "IMAGE"
+  path      String    @unique // MEDIA_DIR'e göre göreli yol
+  title     String
+  duration  Int? // saniye (sadece video)
+  width     Int?
+  height    Int?
+  views     Int       @default(0)
+  mtime     DateTime
+  createdAt DateTime  @default(now())
+  profiles  Profile[]
+
+  @@index([kind, createdAt])
+}

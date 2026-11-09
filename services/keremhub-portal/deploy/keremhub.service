@@ -1,0 +1,18 @@
+[Unit]
+Description=keremhub ana portal
+After=network.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__DIR__
+Environment=NODE_ENV=production
+EnvironmentFile=__DIR__/.env
+ExecStart=__NODE__ __DIR__/node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000
+Restart=always
+RestartSec=3
+# 2 GB RAM için üst sınır
+MemoryMax=600M
+
+[Install]
+WantedBy=multi-user.target

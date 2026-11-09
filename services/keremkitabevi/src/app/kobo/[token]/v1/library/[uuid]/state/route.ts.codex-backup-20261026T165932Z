@@ -1,0 +1,32 @@
+import {NextResponse} from "next/server";
+import {db} from "@/lib/db";
+import {bookUuid,idFromBookUuid,validKoboToken} from "@/lib/kobo";
+export const dynamic="force-dynamic";
+const stamp=(d:Date)=>d.toISOString().replace(/\.\d{3}Z$/,"Z");
+const status=(s:string|null|undefined)=>s==="read"?"Finished":s==="reading"?"Reading":"ReadyToRead";
+async function load(id:number){
+ return db.book.findUnique({where:{id},include:{progress:true,entry:true}});
+}
+function response(b:NonNullable<Awaited<ReturnType<typeof load>>>){
+ const now=b.progress?.updatedAt??b.updatedAt,uuid=bookUuid(b.id);
+ return {EntitlementId:uuid,Created:stamp(b.addedAt),LastModified:stamp(now),PriorityTimestamp:stamp(now),
+ StatusInfo:{LastModified:stamp(b.entry?.updatedAt??now),Status:status(b.entry?.status),TimesStartedReading:0},
+ Statistics:{LastModified:stamp(now)},CurrentBookmark:{LastModified:stamp(now),...(b.progress?{ProgressPercent:Math.round(b.progress.percent*10000)/100,ContentSourceProgressPercent:Math.round(b.progress.percent*10000)/100}:{})}};
+}
+export async function GET(_req:Request,{params}:{params:Promise<{token:string;uuid:string}>}){
+ const {token,uuid}=await params;if(!(await validKoboToken(token)))return new Response("Not found",{status:404});
+ const id=idFromBookUuid(uuid);if(!id)return new Response("Not found",{status:404});const b=await load(id);if(!b)return new Response("Not found",{status:404});
+ return NextResponse.json([response(b)]);
+}
+export async function PUT(req:Request,{params}:{params:Promise<{token:string;uuid:string}>}){
+ const {token,uuid}=await params;if(!(await validKoboToken(token)))return new Response("Not found",{status:404});
+ const id=idFromBookUuid(uuid);if(!id)return new Response("Not found",{status:404});
+ const body=await req.json().catch(()=>null),item=body?.ReadingStates?.[0];if(!item)return NextResponse.json({error:"Invalid reading state"},{status:400});
+ const book=await load(id);if(!book)return new Response("Not found",{status:404});
+ const raw=Number(item.CurrentBookmark?.ProgressPercent),percent=Number.isFinite(raw)?Math.max(0,Math.min(100,raw))/100:book.progress?.percent??0;
+ await db.progress.upsert({where:{bookId:id},create:{bookId:id,location:"",percent},update:{percent}});
+ const code=item.StatusInfo?.Status,now=new Date();
+ if(code==="Finished")await db.readingEntry.upsert({where:{bookId:id},create:{bookId:id,status:"read",finishedAt:now},update:{status:"read",finishedAt:now}});
+ else if(code==="Reading")await db.readingEntry.upsert({where:{bookId:id},create:{bookId:id,status:"reading",startedAt:now},update:{status:"reading",startedAt:book.entry?.startedAt??now}});
+ const updated=await load(id);return NextResponse.json({RequestResult:"Success",UpdateResults:[{EntitlementId:uuid,LastModified:stamp(updated!.progress?.updatedAt??now),PriorityTimestamp:stamp(updated!.progress?.updatedAt??now)}]});
+}

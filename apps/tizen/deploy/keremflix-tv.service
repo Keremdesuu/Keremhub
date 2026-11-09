@@ -1,0 +1,22 @@
+[Unit]
+Description=Keremflix Samsung Tizen bridge
+After=network-online.target keremflix.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kerempi
+WorkingDirectory=/home/kerempi/keremflix-tizen
+Environment=NODE_ENV=production
+Environment=KEREMFLIX_DB=/home/kerempi/keremflix/data/keremflix.db
+ExecStart=/usr/bin/node /home/kerempi/keremflix-tizen/server/bridge.cjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+MemoryMax=160M
+
+[Install]
+WantedBy=multi-user.target

@@ -1,144 +1,85 @@
-# Keremhub Android 2.0.5
+# Keremhub 2.1.0
 
-Dört servis için native Android Java uygulaması. Servis ekranları, listeler,
-formlar, galeri, video oynatıcıları ve EPUB/PDF okuyucu Android View/Canvas
-bileşenleriyle çizilir. Uygulama içinde web sitesini açan WebView veya
-tarayıcıya yönlendirilen servis ekranı yoktur.
+Android, Samsung Tizen ve Raspberry Pi üzerinde çalışan web servisleri için ortak kaynak deposu.
+Ortak yayın numarası [VERSION](./VERSION) dosyasında tutulur. Android APK, Tizen WGT ve web/sunucu kodu aynı `v2.1.0` etiketi altında yayınlanabilir.
 
-## Kurulum
+## Projeler
 
-[Keremhub.apk](./build/Keremhub.apk) dosyasını telefonda açarak mevcut
-uygulamanın üzerine yükleyin. Sürüm: 2.0.5, versionCode: 8.
-İmza anahtarı korunmuştur; güncelleme için uygulama verilerini silmek gerekmez.
-Android 8.0 ve üzeri desteklenir.
+| Klasör | İçerik | Sunucu yolu / port |
+|---|---|---|
+| [apps/android](./apps/android/) | Dört servisi kapsayan native Android uygulaması | Ana sunucu URL'sine bağlanır |
+| [apps/tizen](./apps/tizen/) | Samsung Keremflix istemcisi, TV köprüsü ve paketleme araçları | Köprü: `3210` |
+| [services/keremhub-portal](./services/keremhub-portal/) | Ana portal ve sistem bilgileri | `/` · `3000` |
+| [services/keremflix](./services/keremflix/) | Film/dizi/anime web uygulaması, mobil API, video ve altyazı | `/keremflix` · `3200` |
+| [services/xxxkerem](./services/xxxkerem/) | Video, fotoğraf ve profil yönetimi | `/xxxkerem` · `3300` |
+| [services/keremkitabevi](./services/keremkitabevi/) | Kitaplık, okuyucu, Kobo ve mobil API | `/keremkitabevi` · `3002` |
+| [services/kerem-drive](./services/kerem-drive/) | Dosya yönetimi, yükleme ve önizleme | `/drive` · `3400` |
 
-Telefon sunucuyla aynı ağda olmalıdır. Varsayılan sunucu
-`http://192.168.1.240`; ana ekrandaki k simgesinden ayarlar açılır.
-Sunucu verileri yerinde kalır; bu çalışma sunucu kaynaklarını değiştirmez.
+Nginx beş web servisini tek adres altında sunar. Android bunların API'lerini kullanır.
+Samsung uygulaması TV köprüsüne bağlanır; köprü Keremflix API'sini aktarır ve katalog için mevcut Keremflix veritabanını salt okunur açar.
 
-## Tasarım ve ekranlar
+## Ortak sürüm
 
-xxxkerem 2.0.5: tam ekrana/PiP'ye geçişte decoder, video kaynağı ve önbellek
-korunur; video yeniden açılmaz. Açılışta gereksiz sıfıra sarma kaldırıldı.
-Dosya başlığı ve sarma hedefleri HTTP Range ile okunur; 256 KB parçalar ve
-2 MB önbellek kullanılır. Sarma, hızlı erişim için en yakın anahtar kareye gider.
-Texture ve son video karesi pencere geçişinde korunur; duraklatılmış videoda da
-yeniden yükleme veya tekrar sarma yapılmaz.
+Node.js 24 veya üzeri kullanın. Kök araçların ek npm bağımlılığı yoktur.
+Her uygulamanın bağımlılıkları ve kilit dosyaları ayrı korunur; tüm projeleri tek bağımlılık ağacına birleştirmeyin.
 
-Gerçek video üzerinde oynatıcı kimliği, konum, oynatma/duraklatma durumu ve
-texture piksel örnekleriyle duraklatılmış görüntüyü kontrol eden test:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-gallery-player.ps1
+```sh
+node scripts/version.mjs --check
+# Yeni bir ortak sürüm hazırlamak için:
+node scripts/version.mjs 2.1.1
 ```
 
-Test yalnız video dosyasını okur; görüntülenme veya izleme geçmişi yazmaz.
-
-Keremflix'te film/dizi/anime oynatımı doğrudan yatay tam ekranda başlar;
-cihazın otomatik döndürmesi kapalıyken de çalışır. Bölüm geçişleri mevcut tam
-ekran tercihini korur; oynatıcı kapandığında yön kilidi ve tam ekran kaldırılır.
-
-### Keremflix 2.0.3
-
-- Film detayında **Film eşleşmesini düzelt**: film adıyla TMDB araması,
-  kapak/yıl/orijinal ad ile doğru yapımı seçme. Web ile aynı
-  `GET/POST /keremflix/api/metadata/{titleId}` kullanılır; manuel eşleştirme
-  sunucuda tutulur ve sonraki taramalarda sunucunun koruma kuralına tabidir.
-- **İzlenmedi olarak işaretle**: `DELETE /keremflix/api/progress` ile yapımın
-  ilerlemesi sıfırlanır, detay ve oynatma başlangıcı yeniden yüklenir.
-- Hızın solundaki **Altyazı** menüsünde Kapalı, harici ve gömülü akışlar;
-  görüntü tabanlı desteklenmeyen akışlar pasif gösterilir. Web ile aynı
-  `/api/subtitles/{episodeId}?stream=…` VTT dönüşümü kullanılır.
-- Siyah arka plan, 14–56 px yazı, %0–100 dikey konum ve varsayılana dönüş.
-  Varsayılan: arka plan açık, 26 px, %85. Ayarlar cihazda kalıcıdır.
-  Konum tüm oynatıcı alanına göre hesaplanır; üst/alt siyah boşluklar dahildir.
-- Hıza basılı tutarak ses parçası, PiP ve kısayol seçenekleri açılır.
-
-Yeni özellik testi, gerçek sunucuya yazma iletmeden bellek içi test sunucusunda
-metadata ve ilerleme isteklerini, altyazı görünümünü ve ayar kalıcılığını sınar:
-
-```powershell
-# Ayrı terminalde açık bırakın:
-node .\scripts\flix-fixture-server.mjs
-# APK derlendikten sonra:
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-flix-features.ps1
-```
-
-Karşılaştırma ve test kapsamı: [Keremflix güncelleme kontrolü](./KEREMFLIX_UPDATE_QA.md).
-
-Canlı site 390×844 dikey ve 844×390 yatay tarayıcı alanlarında incelenmiştir.
-Yerel ekranlar aynı responsive eşiklere göre tekrar yerleşir. Keremflix'in
-mobil kapak düzeni masaüstündeki katmanlı tasarımdan ayrı tutulur.
-
-Ekran envanteri ve doğrulama kapsamı:
-[Native arayüz incelemesi](./NATIVE_UI_AUDIT.md).
-
-- Portal: servisler, düzenleme, sistem bilgileri, bağlantı ayarları.
-- Keremflix: ana sayfa, üç kategori, arama, Listem, detay, sezon/bölüm,
-  ekranı kaplayan native player, altyazı/ses/hız/PiP.
-- XXXKerem: video/fotoğraf/profil listeleri, detaylar, inline player,
-  tam ekran, fotoğraflarda geçiş ve yakınlaştırma, profil yönetimi.
-- Kitabevi: kütüphane, filtre/sıralama/sayfalama, detay/düzenleme,
-  takip/raflar, Kobo, yükleme ve native EPUB/KEPUB/PDF okuma.
-- Drive: dosya/klasör, arama, liste/ızgara, konumlar, seçim ve işlemler,
-  yükleme, çöp kutusu, depolama ve native önizleme.
-
-Video: tek dokun kontrol şeridi; çift dokun ±10 saniye;
-basılı tut geçici 2×. Fiziksel klavyeyle oynat/duraklat, ileri/geri, ses
-ve tam ekran kısayolları da desteklenir.
-
-Keremflix videoları 256 KB HTTP Range parçaları ve en fazla 2 MB uygulama
-önbelleğiyle okunur; dosya sonundaki video bilgisi doğrudan istenir.
-Oynatma bilgisi istekleri kapak indirme kuyruğundan bağımsızdır.
-Player'daki önceki/sonraki bölüm butonları dikey ve yatay ekranda görünür;
-geçişte tam ekran korunur ve geri geçmişine fazladan player eklenmez.
+Komut Android manifestini ve ayarlardaki sürümü, Tizen manifestini, altı Node projesinin paket/kilit dosyalarını ve kök sürümünü eşler.
+Android `versionCode`, uygulamanın sürüm adı değiştiğinde bir kez artar. Aynı sürümü tekrar eşlemek sayacı artırmaz.
+Tarihsel sürüm notları kendi belgelerinde korunur.
 
 ## Derleme
 
-Kaynak deposuna derleme çıktıları ve imza anahtarı eklenmez. İlk derlemede
-yerel bir geliştirme anahtarı oluşturulur. Mevcut telefondaki uygulamanın üzerine
-güncelleme yüklemek için önceki imza anahtarını yerel `signing/` klasöründe
-kullanmak gerekir.
+Android, Windows/JDK/Android SDK ile:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-JDK, Android SDK platformu ve build-tools/36.0.0 gerekir.
-APK hizalanır, mevcut geliştirme anahtarıyla imzalanır, imzası doğrulanır.
+Çıktı: `apps/android/build/Keremhub.apk`. Güncelleme imzası için eski anahtarı yerel
+`apps/android/signing/` klasöründe tutun; anahtar depoya dahil edilmez.
 
-## Doğrulama
+Tizen:
 
-```powershell
-node .\scripts\check-server.mjs
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\smoke-native.ps1 -Install -Orientation portrait
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\smoke-native.ps1 -Orientation landscape
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-player-source.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\smoke-flix-player.ps1
+```sh
+npm --prefix apps/tizen ci
+npm --prefix apps/tizen run check
+npm --prefix apps/tizen run build
+npm --prefix apps/tizen test
+npm --prefix apps/tizen run package
 ```
 
-24 salt-okunur sunucu kontrolü geçti. Android emülatöründe soğuk açılış,
-dört servis girişi, native görünüm ağacı, dikey/yatay yerleşim ve çökme
-günlüğü kontrol edildi. İlave detay/player/fotoğraf/EPUB testleri envanterde
-belirtilmiştir. Test ekran görüntüleri derleme çıktısında tutulur.
+WGT çıktısı `apps/tizen/dist/` altındadır. TV'ye kurulum için mevcut Samsung sertifika profiliyle imzalama gerekir;
+ayrıntılar [Tizen README](./apps/tizen/README.md) dosyasındadır.
 
-Player veri kaynağı testi gerçek yerel HTTP sunucusuyla parça okuma,
-önbellek sınırı, 2 GB üzeri dosyada sona atlama, EOF, kapatma ve bozuk
-sunucu yanıtlarını kontrol eder. Player emülatör testi gerçek videoda ilk
-kareyi bekler; izleme ilerlemesini normal oynatıcı gibi sunucuya kaydeder.
+Web servisleri için ilgili klasörde `npm ci` ve `npm run build` çalıştırın.
+Gerçek ayarları ilgili `.env.example` dosyasından hazırlayın. Veritabanları, medya klasörleri ve ortam ayarları bu kaynak deposunun parçası değildir.
+Prisma kullanan projelerde istemcinin üretilmesi ve yeni kurulumda şemanın hazırlanması gerekir; servis README'lerini izleyin.
 
-## Sınırlar
+## Raspberry kurulumu
 
-- Yerel EPUB metin, görsel, bağlantı ve içindekiler okuyucusudur.
-  Tarayıcı CSS/SVG düzeninin tümünü taklit etmez; SVG içindeki raster
-  kapaklar desteklenir. Yerel metin ofsetleri ile web EPUB CFI konumları
-  aynı koordinat sistemi değildir.
-- Office önizlemesi okuma görünümüdür; tam Word sayfalaması ve Excel
-  grafik/karmaşık nesneleri garanti edilmez.
-- Video codec, gömülü ses/altyazı ve PiP desteği cihazın Android
-  uygulamasına bağlıdır.
-- Yükleme/silme/metadata/Kobo gibi gerçek veriyi değiştiren işlemler,
-  tasarım kontrolü sırasında kullanıcı arşivi üzerinde çalıştırılmadı.
-- Native sistem dosya seçicisi, paylaşım penceresi ve bazı diyaloglar
-  web sayfasıyla aynı piksel düzenini kullanmaz. Tüm cihaz ve durumlar
-  için piksel-piksel eşitlik doğrulandığı iddia edilmez.
+Her servisin `deploy/` klasöründe Linux servis/Nginx şablonları bulunur. Bazı eski şablonlar `/home/kerempi/...` kurulum yollarını içerir.
+Mevcut Raspberry'yi güncellerken kaynakları mevcut uygulama dizinlerine eşleyin veya servis çalışma dizinlerini yeni repo yollarına uyarlayın.
+Üretimdeki `.env`, veritabanı ve medya klasörlerini kaynak kodla değiştirmeyin. TV köprüsünün `KEREMFLIX_DB` ayarı mevcut Keremflix veritabanını göstermelidir.
+Bu depo aktarımı çalışan Raspberry servislerini değiştirmez veya yeniden başlatmaz.
+
+## Kontroller ve yayın
+
+```sh
+npm run check
+npm run test:tizen
+```
+
+Android cihaz/emülatör testleri [apps/android/scripts](./apps/android/scripts/) altındadır.
+GitHub Actions sürüm tutarlılığını ve Tizen temel/köprü/altyazı testlerini kontrol eder.
+Bir ortak yayın için her platformu ayrı derleyip doğrulayın; ardından aynı Git etiketini kullanın.
+Kök sürümü değiştirmek kendiliğinden TV kurulumu veya Raspberry dağıtımı yapmaz.
+
+İlk birleştirme Android 2.0.5, Samsung 2.0.7 geliştirme projesi ve 9 Kasım 2026 Raspberry kaynak aktarımından yapılmıştır.
+Raspberry aktarımının orijinal [dosya listesi](./docs/source-import/raspberry-files.json) ve [açıklaması](./docs/source-import/raspberry.md) geçmiş/provenans içindir;
+birleştirme sonrası dosyaların hash listesi değildir.

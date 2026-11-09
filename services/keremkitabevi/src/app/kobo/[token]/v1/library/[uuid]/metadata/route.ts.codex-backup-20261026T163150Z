@@ -1,0 +1,12 @@
+import {NextResponse} from "next/server";
+import {db} from "@/lib/db";
+import {BASE_PATH} from "@/lib/config";
+import {idFromBookUuid,koboMetadata,validKoboToken} from "@/lib/kobo";
+export const dynamic="force-dynamic";
+export async function GET(req:Request,{params}:{params:Promise<{token:string;uuid:string}>}){
+ const {token,uuid}=await params;if(!(await validKoboToken(token)))return new Response("Not found",{status:404});
+ const id=idFromBookUuid(uuid);if(!id)return new Response("Not found",{status:404});
+ const book=await db.book.findUnique({where:{id},include:{author:true,series:true,genres:true}});
+ if(!book)return new Response("Not found",{status:404});
+ return NextResponse.json([koboMetadata(book,new URL(req.url).origin)]);
+}

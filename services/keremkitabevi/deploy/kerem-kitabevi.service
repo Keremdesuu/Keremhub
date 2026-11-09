@@ -1,0 +1,15 @@
+[Unit]
+Description=Kerem Kitabevi (Keremhub e-kitap sitesi)
+After=network.target local-fs.target
+
+[Service]
+Type=simple
+User=__APP_USER__
+WorkingDirectory=__APP_DIR__
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/env npm start
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

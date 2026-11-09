@@ -1,0 +1,7 @@
+node_modules
+.next
+.env
+data
+prisma/*.db
+prisma/*.db-journal
+sample-media

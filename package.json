@@ -1,0 +1,15 @@
+{
+  "name": "keremhub",
+  "version": "2.1.0",
+  "private": true,
+  "description": "Keremhub Android, Samsung Tizen ve Raspberry Pi web servisleri",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "node scripts/version.mjs --check",
+    "version:sync": "node scripts/version.mjs",
+    "test:tizen": "node --test apps/tizen/tests/*.test.cjs",
+    "build:android": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1"
+  }
+}

@@ -1,0 +1,5 @@
+export interface AudioStream {index:number;language:string;label:string;title:string;channels:number;isDefault:boolean}
+const aliases:Record<string,string>={tur:"tr",eng:"en",ger:"de",deu:"de",fre:"fr",fra:"fr",spa:"es",ita:"it",jpn:"ja",kor:"ko",por:"pt",rus:"ru",ara:"ar",chi:"zh",zho:"zh",dut:"nl",nld:"nl",hin:"hi",pol:"pl",swe:"sv",gre:"el",ell:"el",per:"fa",fas:"fa"};
+export function normalizeAudioLanguage(value:string){const code=value.trim().toLowerCase().replace(/_/g,"-").split("-")[0];return aliases[code]??(code&&/^[a-z]{2,3}$/.test(code)?code:"und");}
+export function audioLanguageLabel(language:string){const code=normalizeAudioLanguage(language);if(code==="und")return "Dil belirtilmemiş";try{return new Intl.DisplayNames(["tr"],{type:"language"}).of(code)||language;}catch{return language;}}
+export function preferredAudioStream(streams:AudioStream[],language:string|null){if(!language||normalizeAudioLanguage(language)==="und")return null;return streams.find(s=>normalizeAudioLanguage(s.language)===normalizeAudioLanguage(language))??null;}

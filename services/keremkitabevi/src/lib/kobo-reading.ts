@@ -1,0 +1,10 @@
+type ReadingBook={id:number;addedAt:Date;updatedAt:Date;progress:{percent:number;updatedAt:Date;koboLocation:string|null}|null;entry:{status:string;updatedAt:Date}|null};
+import {bookUuid} from "./kobo";
+const stamp=(d:Date)=>d.toISOString().replace(/\.\d{3}Z$/,"Z");
+export function readingModified(book:ReadingBook){return new Date(Math.max(book.progress?.updatedAt.getTime()||0,book.entry?.updatedAt.getTime()||0,book.addedAt.getTime(),book.updatedAt.getTime()));}
+export function koboReadingState(book:ReadingBook){
+ const modified=readingModified(book),status=book.entry?.status==="read"?"Finished":book.entry?.status==="reading"?"Reading":"ReadyToRead";
+ let location:unknown;try{location=book.progress?.koboLocation?JSON.parse(book.progress.koboLocation):undefined;}catch{}
+ const percent=book.progress?Math.round(book.progress.percent*10000)/100:0;
+ return {EntitlementId:bookUuid(book.id),Created:stamp(book.addedAt),LastModified:stamp(modified),PriorityTimestamp:stamp(modified),StatusInfo:{LastModified:stamp(book.entry?.updatedAt||modified),Status:status,TimesStartedReading:0},Statistics:{LastModified:stamp(modified)},CurrentBookmark:{LastModified:stamp(modified),ProgressPercent:percent,ContentSourceProgressPercent:percent,...(location?{Location:location}:{})}};
+}

@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #1b1b1b;
+  color: #ffffff;
+}
+
+body {
+  min-height: 100vh;
+  font-family: Inter, Arial, Helvetica, system-ui, sans-serif;
+}
+
+::selection {
+  background: #ffa31a;
+  color: #1b1b1b;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #808080 #1b1b1b;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded px-3.5 py-2 text-sm font-semibold transition-colors disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-ink hover:bg-white;
+  }
+  .btn-ghost {
+    @apply btn bg-panel text-white hover:bg-[#3a3a3a];
+  }
+  .btn-danger {
+    @apply btn bg-panel text-red-400 hover:bg-red-500 hover:text-white;
+  }
+  .input {
+    @apply w-full rounded bg-ink px-3 py-2 text-sm text-white placeholder:text-muted outline-none ring-1 ring-[#3a3a3a] focus:ring-brand;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-panel px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-[#3a3a3a];
+  }
+  .chip-active {
+    @apply bg-brand text-ink hover:bg-brand;
+  }
+}
+
+.vol-range {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 9999px;
+  outline: none;
+}
+.vol-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffa31a;
+  border: 0;
+}
+.vol-range::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffa31a;
+  border: 0;
+}
+
+/* Keep the native fullscreen target mounted across photo route changes. */
+html[data-photo-fullscreen="true"]:fullscreen { background: #000; }
+html[data-photo-fullscreen="true"]:fullscreen body { overflow: hidden; }
+html[data-photo-fullscreen="true"]:fullscreen .photo-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  border-radius: 0;
+  box-shadow: none;
+}

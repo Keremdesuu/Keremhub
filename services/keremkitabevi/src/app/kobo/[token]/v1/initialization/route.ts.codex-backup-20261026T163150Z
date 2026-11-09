@@ -1,0 +1,10 @@
+import {NextResponse} from "next/server";
+import {BASE_PATH} from "@/lib/config";
+import {validKoboToken} from "@/lib/kobo";
+export const dynamic="force-dynamic";
+export async function GET(req:Request,{params}:{params:Promise<{token:string}>}){
+ const {token}=await params;if(!(await validKoboToken(token)))return new Response("Not found",{status:404});
+ const origin=new URL(req.url).origin,root=origin+BASE_PATH+"/kobo/"+token,cover=origin+BASE_PATH+"/api/books/{ImageId}/cover";
+ const resources={library_sync:root+"/v1/library/sync",image_host:origin+BASE_PATH,image_url_template:cover,image_url_quality_template:cover};
+ return NextResponse.json({Resources:resources},{headers:{"x-kobo-apitoken":"e30="}});
+}

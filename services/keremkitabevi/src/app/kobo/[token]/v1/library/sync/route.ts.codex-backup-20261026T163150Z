@@ -1,0 +1,35 @@
+import {NextResponse} from "next/server";
+import {db} from "@/lib/db";
+import {BASE_PATH} from "@/lib/config";
+import {bookUuid,koboMetadata,makeSyncToken,tokenFromHeaders,validKoboToken} from "@/lib/kobo";
+export const dynamic="force-dynamic";
+const stamp=(d:Date)=>d.toISOString().replace(/\.\d{3}Z$/,"Z");
+const status=(s:string|null|undefined)=>s==="read"?"Finished":s==="reading"?"Reading":"ReadyToRead";
+export async function GET(req:Request,{params}:{params:Promise<{token:string}>}){
+ const {token}=await params;if(!(await validKoboToken(token)))return new Response("Not found",{status:404});
+ const prior=tokenFromHeaders(req.headers.get("x-kobo-synctoken")),origin=new URL(req.url).origin,site=origin+BASE_PATH;
+ const library=await db.book.findMany({where:{OR:[{koboSync:true},{koboState:{isNot:null}}]},include:{author:true,series:true,genres:true,progress:true,entry:true,koboState:true}});
+ const pending=library.filter(b=>!b.koboState?b.koboSync:(b.updatedAt>prior.modified||(b.updatedAt.getTime()===prior.modified.getTime()&&b.id>prior.lastId)))
+ .sort((a,b)=>a.updatedAt.getTime()-b.updatedAt.getTime()||a.id-b.id);
+ const batch=pending.slice(0,100),more=pending.length>100;
+ let modified=prior.modified,lastId=prior.lastId,created=prior.created;
+ const results:any[]=[];
+ for(const b of batch){
+   const uuid=bookUuid(b.id),removed=!b.koboSync,metadata=koboMetadata(b,origin);
+   const stateTime=b.progress?.updatedAt??b.updatedAt;
+   const readingState={EntitlementId:uuid,Created:stamp(b.addedAt),LastModified:stamp(stateTime),PriorityTimestamp:stamp(stateTime),
+     StatusInfo:{LastModified:stamp(b.entry?.updatedAt??stateTime),Status:status(b.entry?.status),TimesStartedReading:0},
+     Statistics:{LastModified:stamp(stateTime)},
+     CurrentBookmark:{LastModified:stamp(stateTime),...(b.progress?{ProgressPercent:Math.round(b.progress.percent*10000)/100,ContentSourceProgressPercent:Math.round(b.progress.percent*10000)/100}:{})}};
+   const entitlement={Accessibility:"Full",ActivePeriod:{From:stamp(new Date())},Created:stamp(b.addedAt),CrossRevisionId:uuid,Id:uuid,IsRemoved:removed,IsHiddenFromArchive:false,IsLocked:false,LastModified:stamp(b.updatedAt),OriginCategory:"Imported",RevisionId:uuid,Status:"Active"};
+   const item={BookEntitlement:entitlement,BookMetadata:metadata,ReadingState:readingState};
+   results.push({[b.koboState?"ChangedEntitlement":"NewEntitlement"]:item});
+   modified=b.updatedAt;lastId=b.id;created=Math.max(created,b.addedAt.getTime()/1000);
+   await db.koboBookState.upsert({where:{bookId:b.id},create:{bookId:b.id},update:{syncedAt:new Date()}});
+ }
+ const response=NextResponse.json(results);
+ response.headers.set("Content-Type","application/json; charset=utf-8");
+ response.headers.set("x-kobo-synctoken",makeSyncToken({...prior,modified,lastId,created}));
+ if(more)response.headers.set("x-kobo-sync","continue");
+ return response;
+}

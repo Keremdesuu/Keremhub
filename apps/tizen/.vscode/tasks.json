@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Keremflix v2 preview",
+			"type": "shell",
+			"command": "node",
+			"args": [
+				"scripts/preview.cjs"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

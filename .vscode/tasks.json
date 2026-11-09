@@ -2,6 +2,13 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "Keremhub: Ortak sürüm kontrolü",
+      "type": "shell",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/version.mjs", "--check"],
+      "problemMatcher": []
+    },
+    {
       "label": "Keremhub: APK derle",
       "type": "shell",
       "command": "powershell",
@@ -13,7 +20,7 @@
       "label": "Keremhub: Sunucu testleri",
       "type": "shell",
       "command": "node",
-      "args": ["${workspaceFolder}/scripts/check-server.mjs"],
+      "args": ["${workspaceFolder}/apps/android/scripts/check-server.mjs"],
       "problemMatcher": []
     }
   ]

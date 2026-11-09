@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Site {
+  id        Int      @id @default(autoincrement())
+  ad        String
+  aciklama  String   @default("")
+  yol       String
+  ikon      String   @default("globe")
+  renk      String   @default("#0F766E")
+  sira      Int      @default(0)
+  aktif     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,9 @@
+dist/
+.preview/
+node_modules/
+.tools/
+.private/
+*.wgt
+*.zip
+author-signature.xml
+signature1.xml

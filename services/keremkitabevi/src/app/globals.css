@@ -1,0 +1,81 @@
+@import "tailwindcss" source("../");
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/source-serif-4";
+
+@theme {
+  --color-ink: #0c1022;
+  --color-surface: #141a33;
+  --color-raised: #1b2243;
+  --color-line: #28305a;
+  --color-fg: #e9ecfa;
+  --color-muted: #8e97c2;
+  --color-signal: #7a8cff;
+  --color-signal-soft: #b7c0ff;
+  --color-amber: #ffb547;
+
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-fg);
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* İnce ızgara arka planı: sayfanın "teknik çizim kâğıdı" hissi */
+.grid-paper {
+  background-image:
+    linear-gradient(to right, rgba(122, 140, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(122, 140, 255, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--color-signal);
+  color: var(--color-ink);
+}
+
+/* Hero: tarama ışını sayfa açılırken bir kez geçer ve sırtları "okur" */
+@keyframes beam {
+  from { transform: translateX(-4%); opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  to { transform: translateX(104%); opacity: 0; }
+}
+@keyframes spine-in {
+  from { opacity: 0.18; filter: saturate(0.2); }
+  to { opacity: 1; filter: saturate(1); }
+}
+.beam {
+  animation: beam 2.4s cubic-bezier(0.45, 0, 0.2, 1) 0.3s 1 both;
+}
+.spine {
+  animation: spine-in 0.5s ease-out both;
+  animation-delay: calc(0.3s + var(--i) * var(--step));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .beam { animation: none; opacity: 0; }
+  .spine { animation: none; }
+}
+
+/* Okuyucu kâğıt temaları */
+.theme-dark { --reader-bg: #10142b; --reader-fg: #dfe3f7; }
+.theme-sepia { --reader-bg: #f1e6cf; --reader-fg: #3b3024; }
+.theme-light { --reader-bg: #fbfaf7; --reader-fg: #1d1f2b; }
+
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-line) transparent; }

@@ -1,0 +1,15 @@
+# /etc/systemd/system/xxxkerem.service  (SERVIS_ADI ve YOL'ları kendine göre değiştir)
+[Unit]
+Description=xxxkerem medya sitesi
+After=network.target
+
+[Service]
+Type=simple
+User=kerempi
+WorkingDirectory=/home/kerempi/xxxkerem
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/env npm start
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,183 @@
+@import "tailwindcss";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/bebas-neue/400.css";
+
+@theme {
+  /* Primary */
+  --color-black: #000000;
+  --color-brand: #e50914;
+  --color-white: #ffffff;
+
+  /* Secondary */
+  --color-red-100: #eb3942;
+  --color-red-200: #c11119;
+  --color-red-300: #f50723;
+  --color-blue-100: #0071eb;
+  --color-blue-200: #448ef4;
+  --color-blue-300: #54b9c5;
+  --color-green: #46d369;
+
+  /* Neutral */
+  --color-ink-900: #0a0a0a;
+  --color-ink-800: #141414;
+  --color-ink-700: #181818;
+  --color-ink-600: #222222;
+  --color-ink-500: #2f2f2f;
+  --color-ink-400: #404040;
+  --color-gray-300: #808080;
+  --color-gray-200: #b3b3b3;
+  --color-gray-100: #e5e5e5;
+  --color-glass: rgba(255, 255, 255, 0.12);
+  --color-glass-strong: rgba(255, 255, 255, 0.22);
+  --color-veil: rgba(20, 20, 20, 0.72);
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-logo: "Bebas Neue", Impact, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: var(--color-ink-800);
+  color: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-400) transparent;
+}
+
+/* ---------- Tipografi ölçeği (Regular / Medium / Bold) ---------- */
+@utility r-caption2 { font-weight: 400; font-size: 11px; }
+@utility r-caption1 { font-weight: 400; font-size: 13px; letter-spacing: 0.25px; }
+@utility r-smallbody { font-weight: 400; font-size: 14px; }
+@utility r-smallbody-tight { font-weight: 400; font-size: 14px; letter-spacing: -0.25px; }
+@utility r-body { font-weight: 400; font-size: 16px; }
+@utility r-headline2 { font-weight: 400; font-size: 17px; }
+@utility r-headline1 { font-weight: 400; font-size: 18px; }
+@utility r-title4 { font-weight: 400; font-size: 20px; }
+@utility r-title3 { font-weight: 400; font-size: 21px; }
+@utility r-title2 { font-weight: 400; font-size: 24px; }
+@utility r-title1 { font-weight: 400; font-size: 27px; }
+@utility r-largetitle { font-weight: 400; font-size: 50px; }
+
+@utility m-caption2 { font-weight: 500; font-size: 12px; }
+@utility m-caption1 { font-weight: 500; font-size: 13px; }
+@utility m-smallbody { font-weight: 500; font-size: 14px; }
+@utility m-body { font-weight: 500; font-size: 16px; }
+@utility m-body-tight { font-weight: 500; font-size: 16px; letter-spacing: -0.5px; }
+@utility m-headline2 { font-weight: 500; font-size: 20px; }
+@utility m-headline1 { font-weight: 500; font-size: 21px; }
+@utility m-title4 { font-weight: 500; font-size: 22px; }
+@utility m-title3 { font-weight: 500; font-size: 24px; }
+@utility m-title3-tight { font-weight: 500; font-size: 24px; letter-spacing: -0.5px; }
+@utility m-title2 { font-weight: 500; font-size: 28px; }
+@utility m-title1 { font-weight: 500; font-size: 30px; }
+@utility m-largetitle { font-weight: 500; font-size: 33px; }
+
+@utility b-title2 { font-weight: 700; font-size: 20px; }
+@utility b-title1 { font-weight: 700; font-size: 48px; }
+@utility b-largetitle { font-weight: 700; font-size: 55px; }
+
+/* ---------- Bileşenler ---------- */
+.logo {
+  font-family: var(--font-logo);
+  letter-spacing: 0.04em;
+  color: var(--color-brand);
+  line-height: 1;
+}
+
+.row-scroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  padding: 8px 4vw 40px;
+}
+.row-scroller::-webkit-scrollbar { display: none; }
+.row-scroller > * { scroll-snap-align: start; flex: none; }
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: rgba(42, 42, 42, 0.6);
+  color: #fff;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+.icon-btn:hover { border-color: #fff; background: rgba(255, 255, 255, 0.2); }
+.icon-btn:disabled { opacity: 0.4; cursor: default; }
+
+.quality-badge {
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 3px;
+  padding: 0 5px;
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--color-gray-100);
+  white-space: nowrap;
+}
+
+.cert-badge {
+  display: inline-block;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0 6px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-gray-100);
+}
+
+.fade-in { animation: fade-in 0.4s ease both; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* Size the media independently from fullscreen's changing containing block. */
+.keremflix-player { position: fixed; inset: 0; width: 100%; height: 100dvh; overflow: hidden; isolation: isolate; }
+.keremflix-player:fullscreen { width: 100%; height: 100%; max-width: none; max-height: none; }
+.keremflix-video { position: absolute; display: block; max-width: none; max-height: none; object-fit: contain; object-position: center; }
+
+/* Shared artwork treatment for browsing and title details. */
+.hero-artwork { position:absolute; inset:0; overflow:hidden; pointer-events:none; background:#141414; }
+.hero-artwork__ambient { position:absolute; inset:-24px; width:calc(100% + 48px); height:calc(100% + 48px); max-width:none; object-fit:cover; filter:blur(22px) brightness(.46); }
+.hero-artwork__picture { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+.hero-artwork__image { display:block; width:auto; height:100%; max-width:100%; object-fit:contain; mask-image:linear-gradient(to right,transparent,#000 9%,#000 91%,transparent),linear-gradient(to bottom,transparent,#000 8%,#000 84%,transparent); mask-composite:intersect; }
+.hero-artwork__shade { position:absolute; inset:0; background:linear-gradient(to top,#141414 0%,rgba(20,20,20,.6) 15%,transparent 48%),linear-gradient(to right,rgba(20,20,20,.94) 0%,rgba(20,20,20,.68) 27%,rgba(20,20,20,.08) 68%,rgba(20,20,20,.12) 100%),linear-gradient(to bottom,rgba(0,0,0,.45),transparent 28%); }
+.row-scroller { scroll-padding-inline:4vw; padding-block:12px 36px; gap:12px; }
+.row-arrow { position:absolute; z-index:20; top:calc(50% - 38px); display:grid; place-items:center; width:42px; height:52px; border:1px solid rgba(255,255,255,.18); border-radius:12px; color:white; background:rgba(20,20,20,.88); box-shadow:0 4px 20px #0008; backdrop-filter:blur(12px); transition:background .15s,opacity .15s; }
+.row-arrow:hover,.row-arrow:focus-visible { background:rgba(55,55,55,.98); }
+.row-arrow--previous { left:max(8px,calc(4vw - 21px)); }
+.row-arrow--next { right:max(8px,calc(4vw - 21px)); }
+@media(min-width:1024px) { .row-arrow { opacity:0; } .group\/row:hover .row-arrow,.group\/row:focus-within .row-arrow { opacity:1; } }
+@media(max-width:1023px) {
+ .hero-artwork__picture { top:6.5rem; bottom:auto; aspect-ratio:16/9; }
+ .hero-artwork__image { width:100%; height:100%; mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 8%,#000 72%,transparent); }
+ .hero-artwork__shade { background:linear-gradient(to top,#141414 0%,rgba(20,20,20,.96) 24%,transparent 72%),linear-gradient(to bottom,rgba(0,0,0,.35),transparent 30%); }
+ .row-arrow { width:34px; height:42px; top:calc(50% - 33px); }
+}
+@media(prefers-reduced-motion:reduce) { .row-scroller { scroll-behavior:auto; } }
+
+.catalog-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr)); gap:16px; }
+@media(max-width:640px) { .catalog-grid { grid-template-columns:repeat(auto-fill,minmax(min(100%,160px),1fr)); gap:12px; } }
+
+/* Anime key art is portrait; panoramic AniList banners only supply the backdrop. */
+.hero-artwork--poster .hero-artwork__picture { left:45%; right:4vw; }
+.hero-artwork--poster .hero-artwork__image { height:90%; mask-image:linear-gradient(to right,transparent,#000 5%,#000 95%,transparent),linear-gradient(to bottom,transparent,#000 5%,#000 90%,transparent); }
+@media(max-width:1023px) { .hero-artwork--poster .hero-artwork__picture { left:0; right:0; } .hero-artwork--poster .hero-artwork__image { width:auto; height:100%; } }

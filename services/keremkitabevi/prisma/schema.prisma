@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Author {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books Book[]
+}
+
+model Series {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books Book[]
+}
+
+model Genre {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books Book[]
+}
+
+model Book {
+  id          Int       @id @default(autoincrement())
+  relPath     String    @unique
+  format      String // epub | kepub | pdf
+  sizeBytes   Int
+  mtimeMs     Float
+  title       String
+  description String?
+  language    String?
+  publisher   String?
+  year        Int?
+  seriesIndex Float?
+  hasCover    Boolean   @default(false)
+  coverLocked Boolean   @default(false)
+  metadataLocked Boolean @default(false)
+  koboSync    Boolean   @default(false)
+  updatedAt   DateTime  @default(now()) @updatedAt
+  coverHue    Int       @default(250)
+  addedAt     DateTime  @default(now())
+  author      Author?   @relation(fields: [authorId], references: [id])
+  authorId    Int?
+  series      Series?   @relation(fields: [seriesId], references: [id])
+  seriesId    Int?
+  genres      Genre[]
+  progress    Progress?
+  entry       ReadingEntry?
+  shelves     Shelf[]
+  koboState   KoboBookState?
+
+  @@index([authorId])
+  @@index([seriesId])
+  @@index([addedAt])
+}
+
+model Progress {
+  id        Int      @id @default(autoincrement())
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId    Int      @unique
+  koboLocation String?
+  location  String
+  percent   Float    @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+/// Takip: kitabın ana rafı (okumak istiyorum / okunuyor / okundu), puanı ve tarihleri
+model ReadingEntry {
+  id         Int       @id @default(autoincrement())
+  book       Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId     Int       @unique
+  status     String // want | reading | read | dropped
+  rating     Int?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  updatedAt  DateTime  @updatedAt
+
+  @@index([status])
+}
+
+/// Kullanıcının kendi açtığı raflar (etiket gibi; bir kitap birden fazla rafta olabilir)
+model Shelf {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  books     Book[]
+}
+
+model KoboConfig {
+  id        Int      @id @default(1)
+  token     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model KoboBookState {
+  id       Int      @id @default(autoincrement())
+  bookId   Int      @unique
+  book     Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  syncedAt DateTime @default(now())
+  downloadedAt DateTime?
+}
+
+// Independent of Book so physical deletion cannot lose the Kobo removal event.
+model KoboDeletion {
+  id Int @id @default(autoincrement())
+  bookId Int @unique
+  payload String
+  createdAt DateTime @default(now())
+}
