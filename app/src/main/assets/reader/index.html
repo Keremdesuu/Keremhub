@@ -1,0 +1,51 @@
+<!doctype html><html lang="tr"><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta charset="utf-8"><style>
+@font-face{font-family:KeremSerif;src:url('/@fontsource-variable/source-serif-4/files/source-serif-4-latin-ext-wght-normal.woff2') format('woff2');font-weight:200 900;unicode-range:U+0100-02FF,U+1E00-1EFF}
+@font-face{font-family:KeremSerif;src:url('/@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-normal.woff2') format('woff2');font-weight:200 900;unicode-range:U+0000-00FF,U+2000-206F}
+html,body,#reader{width:100%;height:100%;margin:0;overflow:hidden;background:#10142b;color:#dfe3f7}#reader{box-sizing:border-box}iframe{border:0}
+</style><script src="/jszip/dist/jszip.min.js"></script><script src="/epubjs/dist/epub.min.js"></script></head><body><div id="reader"></div><script>
+'use strict';
+let book,rend,settings,ready=false,interacted=false,lastCfi='',toc=[],lastPercent=0;
+const palette=[['#10142b','#dfe3f7'],['#f1e6cf','#3b3024'],['#fbfaf7','#1d1f2b']];
+function error(e){Android.error(String(e&&e.message||e));}
+window.addEventListener('unhandledrejection',e=>error(e.reason));
+function appearance(){
+  if(!rend)return;const colors=palette[settings.theme];document.body.style.background=colors[0];document.getElementById('reader').style.background=colors[0];
+  rend.themes.default({'html,body':{'background':colors[0]+' !important','color':colors[1]+' !important'},'body':{'font-family':'KeremSerif,Georgia,serif !important','font-size':settings.font+'% !important','line-height':'1.7 !important'},'a':{'color':'#7a8cff !important'},'img,svg':{'max-width':'100% !important','height':'auto'}});
+  rend.themes.fontSize(settings.font+'%');
+  for(const content of rend.getContents()){
+    content.addStylesheetCss(`@font-face{font-family:KeremSerif;src:url('https://reader.keremhub.invalid/@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-normal.woff2');font-weight:200 900}@font-face{font-family:KeremSerif;src:url('https://reader.keremhub.invalid/@fontsource-variable/source-serif-4/files/source-serif-4-latin-ext-wght-normal.woff2');font-weight:200 900;unicode-range:U+0100-02FF,U+1E00-1EFF}html,body{background:${colors[0]}!important;color:${colors[1]}!important}body{font-family:KeremSerif,Georgia,serif!important;font-size:${settings.font}%!important;line-height:1.7!important}`,'keremhub-native-fonts');
+  }
+}
+function report(loc){
+  if(!loc||!loc.start)return;lastCfi=loc.start.cfi;
+  let p=book.locations.length()?book.locations.percentageFromCfi(lastCfi):(loc.start.percentage||0);
+  lastPercent=Math.max(0,Math.min(1,Number.isFinite(p)?p:0));const entry=book.navigation&&book.navigation.get(loc.start.href);
+  Android.relocated(lastCfi,lastPercent,entry?entry.label.trim():'',ready&&interacted);
+}
+function flatten(items,depth){for(const x of items){toc.push({label:'　'.repeat(depth)+String(x.label||'Bölüm').trim(),href:x.href});if(x.subitems)flatten(x.subitems,depth+1);}}
+async function boot(config){
+  settings=config;book=ePub('/book.epub',{openAs:'epub'});
+  rend=book.renderTo('reader',{width:'100%',height:'100%',flow:settings.scrolled?'scrolled-doc':'paginated',spread:'auto',allowScriptedContent:false});
+  rend.on('relocated',report);rend.on('displayError',error);
+  rend.hooks.content.register(content=>{
+    let x=0,y=0;const doc=content.document;
+    doc.addEventListener('touchstart',e=>{if(e.touches.length===1){x=e.touches[0].clientX;y=e.touches[0].clientY;interacted=true;}},{passive:true});
+    doc.addEventListener('touchend',e=>{if(settings.scrolled||!e.changedTouches.length)return;const dx=e.changedTouches[0].clientX-x,dy=e.changedTouches[0].clientY-y;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy))move(dx<0?1:-1);},{passive:true});
+    doc.addEventListener('click',()=>{interacted=true;});
+    doc.addEventListener('keydown',e=>{if(e.key==='ArrowRight'){e.preventDefault();move(1);}if(e.key==='ArrowLeft'){e.preventDefault();move(-1);}});
+    appearance();
+  });
+  rend.on('rendered',appearance);await book.ready;flatten((await book.loaded.navigation).toc,0);
+  try{await rend.display(settings.location||undefined);}catch(e){await rend.display();Android.error('Kayıtlı konum açılamadı; kitabın başı açıldı.');}
+  appearance();ready=true;Android.loaded(JSON.stringify(toc));
+  book.locations.generate(1600).then(()=>{report(rend.currentLocation());Android.locationsReady();}).catch(error);
+}
+function move(direction){if(!ready)return;interacted=true;(direction>0?rend.next():rend.prev()).catch(error);}
+function go(location){if(!ready)return;interacted=true;rend.display(location).catch(error);}
+function percent(value){if(!ready||!book.locations.length())return;go(book.locations.cfiFromPercentage(Math.max(0,Math.min(1,value))));}
+function setFont(value){settings.font=value;appearance();}
+function setTheme(value){settings.theme=value;appearance();}
+function setFlow(value){if(!ready)return;settings.scrolled=value;rend.flow(value?'scrolled-doc':'paginated');rend.display(lastCfi).catch(error);}
+async function searchBook(query){const results=[];try{for(const item of book.spine.spineItems){await item.load(book.load.bind(book));for(const result of item.find(query)){results.push(result);if(results.length>=100)break;}item.unload();if(results.length>=100)break;}Android.searchResults(JSON.stringify(results));}catch(e){error(e);}}
+function snapshot(){report(rend.currentLocation());}
+</script></body></html>

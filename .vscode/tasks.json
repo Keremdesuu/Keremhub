@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Keremhub: APK derle",
+      "type": "shell",
+      "command": "powershell",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/build.ps1"],
+      "group": {"kind": "build", "isDefault": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "Keremhub: Sunucu testleri",
+      "type": "shell",
+      "command": "node",
+      "args": ["${workspaceFolder}/scripts/check-server.mjs"],
+      "problemMatcher": []
+    }
+  ]
+}

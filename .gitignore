@@ -1,0 +1,15 @@
+/build/
+/.android/
+/.gradle/
+/local.properties
+/inspection/
+/source-inspection.tgz
+/signing/
+*.log
+*.jks
+*.keystore
+*.p12
+*.pfx
+.env
+.env.*
+!.env.example

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="512" height="512" role="img" aria-labelledby="title desc">
+  <title id="title">Keremhub</title>
+  <desc id="desc">Gece laciverti zeminde lavanta ve mint geçişli K monogramı, sağ üstte bağlantı noktası.</desc>
+  <defs>
+    <linearGradient id="surface" x1="4" y1="0" x2="104" y2="108" gradientUnits="userSpaceOnUse"><stop stop-color="#242D4B"/><stop offset="1" stop-color="#0B1023"/></linearGradient>
+    <linearGradient id="stem" x1="30" y1="28" x2="43" y2="80" gradientUnits="userSpaceOnUse"><stop stop-color="#D5CFFF"/><stop offset="1" stop-color="#9686FF"/></linearGradient>
+    <linearGradient id="upper" x1="46" y1="53" x2="79" y2="28" gradientUnits="userSpaceOnUse"><stop stop-color="#8F86FF"/><stop offset="1" stop-color="#B6C6FF"/></linearGradient>
+    <linearGradient id="lower" x1="46" y1="55" x2="81" y2="80" gradientUnits="userSpaceOnUse"><stop stop-color="#7E8AFF"/><stop offset="1" stop-color="#56E3CB"/></linearGradient>
+  </defs>
+  <path fill="url(#surface)" d="M28 0H80Q108 0 108 28V80Q108 108 80 108H28Q0 108 0 80V28Q0 0 28 0Z"/>
+  <path fill="none" stroke="#FFFFFF" stroke-opacity=".19" d="M28 1H80Q107 1 107 28V80Q107 107 80 107H28Q1 107 1 80V28Q1 1 28 1Z"/>
+  <path fill="url(#stem)" d="M34 28H39Q43 28 43 32V76Q43 80 39 80H34Q30 80 30 76V32Q30 28 34 28Z"/>
+  <path fill="url(#upper)" d="M46 51L64 31Q67 28 71 28H80L55 58Z"/>
+  <path fill="url(#lower)" d="M46 60L55 50L81 80H68Q65 80 63 77Z"/>
+  <circle cx="79" cy="20" r="7" fill="none" stroke="#6FEACD" stroke-opacity=".25"/>
+  <circle cx="79" cy="20" r="4" fill="#8AF4D5"/>
+</svg>
