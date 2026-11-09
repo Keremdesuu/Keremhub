@@ -10,6 +10,8 @@
     "check": "node scripts/version.mjs --check",
     "version:sync": "node scripts/version.mjs",
     "test:tizen": "node --test apps/tizen/tests/*.test.cjs",
-    "build:android": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1"
+    "build:android": "powershell -NoProfile -ExecutionPolicy Bypass -File build.ps1",
+    "release:pack": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-downloads.ps1",
+    "release:publish": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/publish-release.ps1"
   }
 }
